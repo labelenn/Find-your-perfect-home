@@ -17,16 +17,53 @@ def extract_information(property_string: str) -> dict:
     - land_area <int>: land area in m^2 (ONLY if it's a house. This will be excluded if it's an apartment)
     - floor_area <int>: floor area in m^2 of the property
     - price <int>: the predicted price of the property
-    - property_features <list of strings>: a semi-color separated list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
+    - property_features <list of strings>: a semi-colon separated list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
       -- this can have 0 items, and if it does, make an empty list
     '''
-    raise NotImplementedError
+    info = property_string.split(',')
+
+    property_info =  {}
+    property_info['prop_id'] = info[0]
+
+    # We can split the address with space as the delimiter, and check if the first element contains a '/'.
+    # This will help us determine if it's an apartment or a house, taking into account that a '/' can appear else where in the address.
+    property_info['prop_type'] = 'apartment' if '/' in info[1].split(' ')[0] else 'house'
+
+    property_info['full_address'] = info[1]
+    property_info['suburb'] = info[1].split(' ')[-3]
+    property_info['bedrooms'] = int(info[2])
+    property_info['bathrooms'] = int(info[3])
+    property_info['parking_spaces'] = int(info[4])
+    property_info['latitude'] = float(info[5])
+    property_info['longitude'] = float(info[6])
+
+    if property_info['prop_type'] == 'apartment':
+        property_info['floor_number'] = int(info[7])
+    else:
+        property_info['land_area'] = int(info[8])
+
+    property_info['floor_area'] = int(info[9])
+    property_info['price'] = int(info[10])
+    property_info['property_features'] = info[11].split(';') if info[10] != '' else []
+
+    return property_info
+    
 
 def add_feature(property_dict: dict, feature: str) -> None:
-    raise NotImplementedError
+    '''
+    Adds a feature to the property_features key in the property dictionary.
+    If the feature already exists, ignore the new value and don't add anything.
+    '''
+    if feature not in property_dict['property_features']:
+        property_dict['property_features'].append(feature)
 
 def remove_feature(property_dict: dict, feature: str) -> None:
-    raise NotImplementedError
+    '''
+    Removes a feature from the property_features key in the property dictionary.
+    If the feature doesn't exist, ignore the new value and don't remove anything.
+    '''
+    if feature in property_dict['property_features']:
+        property_dict['property_features'].remove(feature)
 
 def main():
     sample_string = "P10001,3 Antrim Place Langwarrin VIC 3910,4,2,2,-38.16655678,145.1838435,,608,257,870000,dishwasher;central heating"
