@@ -12,9 +12,9 @@ class House(Property):
                         price: int,
                         property_features: List[str],
                         coordinates: Tuple[float, float]):
-        '''
+        """
         Initialises a house object.
-        '''
+        """
         self.prop_id = prop_id
         self.bedrooms = bedrooms
         self.bathrooms = bathrooms
@@ -27,15 +27,15 @@ class House(Property):
         self.coordinates = coordinates
 
     def get_land_area(self) -> int:
-        '''
+        """
         Returns the land area of the property
-        '''
+        """
         return self.land_area
     
     def get_floor_number(self) -> None:
-        '''
+        """
         Returns None as a house does not have a floor number
-        '''
+        """
         return None
 
 class Apartment(Property):
@@ -49,9 +49,9 @@ class Apartment(Property):
                         price: int,
                         property_features: List[str],
                         coordinates: Tuple[float, float]):
-        '''
+        """
         Initialises an apartment object.
-        '''
+        """
         self.prop_id = prop_id
         self.bedrooms = bedrooms
         self.bathrooms = bathrooms
@@ -64,17 +64,17 @@ class Apartment(Property):
         self.coordinates = coordinates
 
     def get_floor_number(self) -> int:
-        '''
+        """
         Returns the floor number of the property
-        '''
+        """
         return self.floor_number
     
     def get_land_area(self) -> None:
-        '''
+        """
         Returns None as an apartment does not have a land area
-        '''
+        """
         return None
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
 
