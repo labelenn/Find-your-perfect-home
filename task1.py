@@ -60,7 +60,7 @@ def add_feature(property_dict: dict, feature: str) -> None:
 def remove_feature(property_dict: dict, feature: str) -> None:
     """
     Removes a feature from the property_features key in the property dictionary.
-    If the feature doesn"t exist, ignore the new value and don"t remove anything.l
+    If the feature doesn"t exist, ignore the new value and don"t remove anything.
     """
     if feature in property_dict["property_features"]:
         property_dict["property_features"].remove(feature)
