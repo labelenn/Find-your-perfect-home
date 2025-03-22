@@ -109,6 +109,7 @@ class Property(ABC):
         '''
         self.floor_number = floor_number
 
+    @abstractmethod
     def get_floor_number(self) -> Union[int,None]:
         '''
         Returns the floor number of the property. Will return None if the property is a house
@@ -121,6 +122,7 @@ class Property(ABC):
         '''
         self.land_area = land_area
 
+    @abstractmethod
     def get_land_area(self) -> Union[int,None]:
         '''
         Returns the land area of the property. Will return None if the property is an apartment

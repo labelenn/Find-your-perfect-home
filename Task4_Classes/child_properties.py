@@ -31,6 +31,12 @@ class House(Property):
         Returns the land area of the property
         '''
         return self.land_area
+    
+    def get_floor_number(self) -> None:
+        '''
+        Returns None as a house does not have a floor number
+        '''
+        return None
 
 class Apartment(Property):
     def __init__(self, prop_id: str, 
@@ -62,6 +68,12 @@ class Apartment(Property):
         Returns the floor number of the property
         '''
         return self.floor_number
+    
+    def get_land_area(self) -> None:
+        '''
+        Returns None as an apartment does not have a land area
+        '''
+        return None
 
 if __name__ == '__main__':
     pass
