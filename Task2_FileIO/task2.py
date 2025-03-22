@@ -78,6 +78,8 @@ def process_properties(file_name: str) -> dict:
     file_handle.readline() # Skip the header
     properties = {}
 
+    # Iterate through each line in the file and extract the property information.
+    # Add the property information to the properties dictionary.
     for line in file_handle:
         prop_info = extract_property_information(line)
         properties[prop_info['prop_id']] = prop_info
@@ -109,6 +111,8 @@ def nearest_station(properties: dict, stations: dict, prop_id: str) -> str:
     min_distance = float('inf')
     nearest_station = ''
 
+    # Iterate through all the stations and calculate the distance between the property and the station.
+    # If the distance is less than the minimum distance, update the minimum distance and the nearest station.
     for key in stations:
         station_lat = stations[key]['stop_lat']
         station_lon = stations[key]['stop_lon']
