@@ -6,28 +6,56 @@ class Amenity():
                         amenity_type: str, 
                         amenity_subtype: str,
                         coordinates: Tuple[float, float]):
-        raise NotImplementedError
+        '''
+        Initialises an amenity object.
+        '''
+        self.amenity_code = amenity_code
+        self.amenity_name = amenity_name
+        self.amenity_type = amenity_type
+        self.amenity_subtype = amenity_subtype
+        self.coordinates = coordinates
 
     def get_amenity_code(self) -> str:
-        raise NotImplementedError
+        '''
+        Returns the code of the amenity
+        '''
+        return self.amenity_code
     
     def set_amenity_name(self, amenity_name: str) -> None:
-        raise NotImplementedError
+        '''
+        Sets the name of the amenity
+        '''
+        self.amenity_name = amenity_name
     
     def get_amenity_name(self) -> str:
-        raise NotImplementedError
+        '''
+        Returns the name of the amenity
+        '''
+        return self.amenity_name
     
     def get_amenity_coords(self) -> Tuple[float, float]:
-        raise NotImplementedError
+        '''
+        Returns the coordinates of the amenity
+        '''
+        return self.coordinates
     
     def get_amenity_type(self) -> str:
-        raise NotImplementedError
+        '''
+        Returns the type of the amenity
+        '''
+        return self.amenity_type
     
     def set_amenity_subtype(self, amenity_subtype: Union[str,None]) -> None:
-        raise NotImplementedError
+        '''
+        Sets the subtype of the amenity
+        '''
+        self.amenity_subtype = amenity_subtype
     
     def get_amenity_subtype(self) -> Union[str,None]:
-        raise NotImplementedError
+        '''
+        Returns the subtype of the amenity
+        '''
+        return self.amenity_subtype
 
 if __name__ == '__main__':
     a = Amenity('1001')
