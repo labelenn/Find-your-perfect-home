@@ -279,6 +279,11 @@ class Property(ABC):
         # If the type or subtype doesn"t exist or is invalid, return None
         valid_types = ["medical_centre", "school", "train_station", "sport_facility"]
         valid_subtypes = ["Primary", "Secondary", "Pri/Sec"]
+
+        for a in amenities:
+            if a.get_amenity_type() == 'sport_facility':
+                valid_subtypes.append(a.get_amenity_subtype())
+
         if amenity_type not in valid_types:
             return None, None
         

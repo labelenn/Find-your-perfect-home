@@ -89,9 +89,18 @@ def create_response_dict(scored_properties: dict) -> dict:
     This method takes in a dictionary that has the property objects 
     and their star scores and creates a dictionary in JSON format 
     that can be written into a file
+
+    Arguments:
+        scored_properties (dict): a dictionary containing the property objects and their star scores
+
+    Returns:
+        dict: a dictionary that can be written into a file
     """
-    # TODO: Step 3 - Define this method to create a response dictionary
-    raise NotImplementedError
+    response_dict = { "properties": []}
+    for key in scored_properties.keys():
+        response_dict['properties'].append({"property_id": scored_properties[key].get_prop_id(), "star_score": key})
+
+    return response_dict
 
 def produce_star_scores(request_filename: str, properties_file: str, amenities_files: List[str]) -> dict:
     # Read the properties and amenities
@@ -123,10 +132,14 @@ def respond(response_dict: dict) -> None:
     """
     This function reads a response dictionary and creates a JSON 
     file based on the content of the response dictionary
+
+    Arguments:
+        response_dict (dict): a dictionary that contains the response
     """
-    # TODO: Step 4 - Create this method to read a response dictionary
-    # and create a JSON file
-    raise NotImplementedError
+    response_dict['properties'] = sorted(response_dict['properties'], key=lambda x: x['star_score'], reverse=True)
+
+    with open('response.json', 'w') as file:
+        json.dump(response_dict, file)
 
 if __name__ == '__main__':
     response_dict, matched_props = produce_star_scores('request.json', 'melbourne_properties.csv', ['melbourne_medical.csv', 'melbourne_schools.csv', 'train_stations.csv', 'sport_facilities.csv'])
