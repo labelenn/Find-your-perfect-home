@@ -3,25 +3,14 @@ from haversine import haversine_distance
 
 def extract_property_information(property_string: str) -> dict:
     """
-    Extracts the property"s information from the given string, and returns a dictionary containing the information.
-    The dictionary will contain the following:
-    - prop_id <str>: the property"s ID
-    - prop_type <str>: the type of the property (either "house" or "apartment")
-    - full_address <str>: this is the address of the property
-    -- if it"s a house, it will be in the format of "<street number> <street name> <street type> <suburb> <state code> <postcode>"
-    -- if it"s an apartment, it will be in the format of "<apartment number>/<street number> <street name> <street type> <suburb> <state code> <postcode>"
-    - suburb <str>: the suburb of the property
-    - bedrooms <int>: the number of bedrooms in the property
-    - bathrooms <int>: the number of bathrooms in the property
-    - parking_spaces <int>: the number of car spaces in the property
-    - latitude <float>: the latitude of the property
-    - longitude <float>: the longitude of the property
-    - floor_number <int>: the floor number of the property (ONLY if it"s an apartment. This will be excluded if it"s a house)
-    - land_area <int>: land area in m^2 (ONLY if it"s a house. This will be excluded if it"s an apartment)
-    - floor_area <int>: floor area in m^2 of the property
-    - price <int>: the predicted price of the property
-    - property_features <list of strings>: a semi-colon separated list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
-    -- this can have 0 items, and if it does, make an empty list
+    Extracts the property"s information from the given string.
+
+    Arguments:
+        property_string (str): a string containing the property"s information in the following format:
+        "<prop_id>,<full_address>,<bedrooms>,<bathrooms>,<parking_spaces>,<latitude>,<longitude>,<floor_number>,<land_area>,<floor_area>,<price>,<property_features>"
+
+    Returns:
+        dict: a dictionary containing the property's information. The keys are the name of the property's attributes and the values are the corresponding values.
     """
     info = property_string.split(",")
 
@@ -53,12 +42,14 @@ def extract_property_information(property_string: str) -> dict:
 
 def extract_station_information(station_string: str) -> dict:
     """
-    Extracts the train station"s information from the given string, and returns a dictionary containing the information.
-    The dictionary will contain the following:
-    - stop_id <str>: the station"s stop ID
-    - stop_name <str>: the name of the station
-    - stop_lat <float>: the latitude of the station
-    - stop_lon <float>: the longitude of the station
+    Extracts the train station's information from the given string.
+
+    Arguments:
+        station_string (str): a string containing the train station's information in the following format:
+        "<stop_id>,<stop_name>,<stop_lat>,<stop_lon>"
+
+    Returns:
+        dict: a dictionary containing the station's information. The keys are the name of the station's attributes and the values are the corresponding values.
     """
     info = station_string.split(",")
     station_info = {}
@@ -70,8 +61,13 @@ def extract_station_information(station_string: str) -> dict:
 
 def process_properties(file_name: str) -> dict:
     """
-    Reads the properties" information from the given file and returns a dictionary.
-    The diction will have the property"s ID as the key, and the value will be another dictionary for the property"s information (same structure as Task 1).
+    Reads the properties" information from the given file name.
+
+    Arguments:
+        file_name (str): the name of the file containing the properties information.
+
+    Returns:
+        dict: a dictionary containing dictionary(s) of property(s). The keys are the property IDs and the values are the corresponding dictionary containing the property information.
     """
 
     file_handle = open(file_name, "r")
@@ -88,8 +84,13 @@ def process_properties(file_name: str) -> dict:
         
 def process_stations(file_name: str) -> dict:
     """
-    Reads the train stations" information from the given file and returns a dictionary.
-    The diction will have the station"s stop ID as the key, and the value will be another dictionary for the station"s information.
+    Reads the train stations" information from the given file name.
+
+    Arguments:
+        file_name (str): the name of the file containing the train stations information.
+
+    Returns:
+        dict: a dictionary containing the train stations' information. The keys are the station IDs and the values are the corresponding dictionary containing the station information.
     """
     file_handle = open(file_name, "r")
     dict_keys = file_handle.readline().strip().split(",")
@@ -103,7 +104,14 @@ def process_stations(file_name: str) -> dict:
 def nearest_station(properties: dict, stations: dict, prop_id: str) -> str:
     """
     Finds the nearest train station to the given property ID.
-    It returns the name of the nearest station.
+
+    Arguments:
+        properties (dict): a dictionary containing dictionary(s) of property(s). The keys are the property IDs and the values are the corresponding dictionary containing the property information.
+        stations (dict): a dictionary containing the train stations' information. The keys are the station IDs and the values are the corresponding dictionary containing the station information.
+        prop_id (str): the property ID to find the nearest station for.
+
+    Returns:
+        str: the name of the nearest station to the property
     """
     prop = properties[prop_id]
     prop_lat = prop["latitude"]

@@ -1,24 +1,13 @@
 def extract_information(property_string: str) -> dict:
     """
-    Extracts the property"s information from the given string, and returns a dictionary containing the information.
-    The dictionary will contain the following:
-    - prop_id <str>: the property"s ID
-    - prop_type <str>: the type of the property (either "house" or "apartment")
-    - full_address <str>: this is the address of the property
-      -- if it"s a house, it will be in the format of "<street number> <street name> <street type> <suburb> <state code> <postcode>"
-      -- if it"s an apartment, it will be in the format of "<apartment number>/<street number> <street name> <street type> <suburb> <state code> <postcode>"
-    - suburb <str>: the suburb of the property
-    - bedrooms <int>: the number of bedrooms in the property
-    - bathrooms <int>: the number of bathrooms in the property
-    - parking_spaces <int>: the number of car spaces in the property
-    - latitude <float>: the latitude of the property
-    - longitude <float>: the longitude of the property
-    - floor_number <int>: the floor number of the property (ONLY if it"s an apartment. This will be excluded if it"s a house)
-    - land_area <int>: land area in m^2 (ONLY if it"s a house. This will be excluded if it"s an apartment)
-    - floor_area <int>: floor area in m^2 of the property
-    - price <int>: the predicted price of the property
-    - property_features <list of strings>: a semi-colon separated list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
-      -- this can have 0 items, and if it does, make an empty list
+    Extracts the property"s information from the given string.
+
+    Arguments:
+        property_string (str): a string containing the property"s information in the following format:
+        "<prop_id>,<full_address>,<bedrooms>,<bathrooms>,<parking_spaces>,<latitude>,<longitude>,<floor_number>,<land_area>,<floor_area>,<price>,<property_features>"
+
+    Returns:
+        dict: a dictionary containing the property's information. The keys are the name of the property's attributes and the values are the corresponding values.
     """
     info = property_string.split(",")
 
@@ -53,6 +42,10 @@ def add_feature(property_dict: dict, feature: str) -> None:
     """
     Adds a feature to the property_features key in the property dictionary.
     If the feature already exists, ignore the new value and don"t add anything.
+
+    Arguments:
+        property_dict (dict): a dictionary containing the property's information.
+        feature (str): the feature to add to the property
     """
     if feature not in property_dict["property_features"]:
         property_dict["property_features"].append(feature)
@@ -61,6 +54,10 @@ def remove_feature(property_dict: dict, feature: str) -> None:
     """
     Removes a feature from the property_features key in the property dictionary.
     If the feature doesn"t exist, ignore the new value and don"t remove anything.
+
+    Arguments:
+        property_dict (dict): a dictionary containing the property's information.
+        feature (str): the feature to remove from the property
     """
     if feature in property_dict["property_features"]:
         property_dict["property_features"].remove(feature)
