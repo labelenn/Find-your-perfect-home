@@ -24,10 +24,25 @@ def read_request(request_filename: str) -> Tuple[dict, dict]:
     with open(request_filename, 'r') as file:
         request = json.load(file)['request']
         return request['house_importance'], request['amenities_accessibility']
+    
+def validate_field(field: str, house_importance: dict):
+    """
+    This method checks if a field is valid.
+
+    Arguments:
+        field (str): the field to be checked
+
+    Returns:
+        str, int, or None: the value of the field if it is valid
+    """
+    if field in house_importance.keys():
+        return house_importance[field]
+    return None
+
 
 def find_matching_properties(props: List[Property], house_importance: dict) -> List[Property]:
     """
-    THis method recevied a list of all properties and a dictionary that
+    This method recevied a list of all properties and a dictionary that
     contains the house importance criteria from a user's request 
     and returns a list of Property objects that match the user's request
 
@@ -41,20 +56,20 @@ def find_matching_properties(props: List[Property], house_importance: dict) -> L
     matching_properties = props
 
     # Full match
-    suburb = house_importance['suburb'] if 'suburb' in house_importance.keys() else None
-    property_type = house_importance['property_type'] if 'property_type' in house_importance.keys() else None
-    property_features = house_importance['property_features'] if 'property_features' in house_importance.keys() else None
+    suburb = validate_field('suburb', house_importance)
+    property_type = validate_field('property_type', house_importance)
+    property_features = validate_field('property_features', house_importance)
 
     # Treat these as ceiling values. Properties that have these values or less than these values will be considered
-    price = house_importance['price'] if 'price' in house_importance.keys() else None
-    floor_number = house_importance['floor_number'] if 'floor_number' in house_importance.keys() else None
+    price = validate_field('price', house_importance)
+    floor_number = validate_field('floor_number', house_importance)
 
     # Treat these as baseline values. Properties that have these values or greater will be considered
-    floor_area = house_importance['floor_area'] if 'floor_area' in house_importance.keys() else None
-    land_area = house_importance['land_area'] if 'land_area' in house_importance.keys() else None
-    bedrooms = house_importance['bedrooms'] if 'bedrooms' in house_importance.keys() else None
-    bathrooms = house_importance['bathrooms'] if 'bathrooms' in house_importance.keys() else None
-    parking_spaces = house_importance['parking_spaces'] if 'parking_spaces' in house_importance.keys() else None
+    floor_area = validate_field('floor_area', house_importance)
+    land_area = validate_field('land_area', house_importance)
+    bedrooms = validate_field('bedrooms', house_importance)
+    bathrooms = validate_field('bathrooms', house_importance)
+    parking_spaces = validate_field('parking_spaces', house_importance)
 
     # Filter out properties per information provided
     if property_type is not None:
@@ -69,7 +84,10 @@ def find_matching_properties(props: List[Property], house_importance: dict) -> L
     if floor_area is not None:
         matching_properties = [x for x in matching_properties if x.get_floor_area() >= floor_area]
     if land_area is not None:
-        matching_properties = [x for x in matching_properties if x.get_land_area() >= land_area]
+        for prop in matching_properties:
+            if prop.get_land_area() is not None:
+                if prop.get_land_area() < land_area:
+                    matching_properties.remove(prop)
     if bedrooms is not None:
         matching_properties = [x for x in matching_properties if x.get_bedrooms() >= bedrooms]
     if bathrooms is not None:
@@ -80,7 +98,10 @@ def find_matching_properties(props: List[Property], house_importance: dict) -> L
     if price is not None:
         matching_properties = [x for x in matching_properties if x.get_price() <= price]
     if floor_number is not None:
-        matching_properties = [x for x in matching_properties if x.get_floor_number() <= floor_number]
+        for prop in matching_properties:
+            if prop.get_floor_number() is not None:
+                if prop.get_floor_number() > floor_number:
+                    matching_properties.remove(prop)
 
     return matching_properties
 
