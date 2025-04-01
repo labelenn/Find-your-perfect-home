@@ -111,30 +111,46 @@ def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
     Returns:
         str: A CSV-like string containing the property ID, full address, and matching phone number (if there's any).
     """
-    csv_string = "prop_id,full_address,phone\n"
+    header = "prop_id,full_address,phone"
+    data = [header]
+
     regex_handler = RegexHandler()
 
-    # Read the phone file and keep the valid phone numbers and their corresponding property IDs
+    # Get the index of the columns in the files
+    prop_id_index_1 = 0
+    prop_id_index_2 = 0
+    full_address_index = 1
+    phone_index = 2
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()[0]
+        prop_id_index_1 = prop_file.strip().split(",").index("prop_id")
+        full_address_index = prop_file.strip().split(",").index("full_address")
+    with open(phone_fpath, 'r') as phone_file:
+        phone_file = phone_file.readlines()[0]
+        prop_id_index_2 = phone_file.strip().split(",").index("prop_id")
+        phone_index = phone_file.strip().split(",").index("phone")
+
+    # Read the phone file and keep the valid phones and their corresponding property IDs
     valid_phones = {}
     with open(phone_fpath, 'r') as phone_file:
         phone_file = phone_file.readlines()[1:]
         for line in phone_file:
-            prop_id = line.strip().split(",")[0]
-            phone = line.strip().split(",")[2]
+            prop_id = line.strip().split(",")[prop_id_index_2]
+            phone = line.strip().split(",")[phone_index]
             if regex_handler.validate_phone(phone):
                 valid_phones[prop_id] = phone
 
     with open(prop_fpath, 'r') as prop_file:
         prop_file = prop_file.readlines()[1:]
         for line in prop_file:
-            prop_id = line.strip().split(",")[0]
-            full_address = line.strip().split(",")[1]
+            prop_id = line.strip().split(",")[prop_id_index_1]
+            full_address = line.strip().split(",")[full_address_index]
             if prop_id in valid_phones:
-                csv_string += f"{prop_id},{full_address},{valid_phones[prop_id]}\n"
+                data.append(f"{prop_id},{full_address},{valid_phones[prop_id]}")
             else:
-                csv_string += f"{prop_id},{full_address},\n"
+                data.append(f"{prop_id},{full_address},")
 
-    return csv_string
+    return "\n".join(data)
 
 
 def merge_prop_email_phone(prop_fpath: str, email_phone_fpath: str) -> str:
