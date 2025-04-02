@@ -61,8 +61,15 @@ def prop_email_matcher(prop_fpath: str, email_fpath: str) -> str:
     """
     header = "prop_id,full_address,email"
     data = [header]
-
     regex_handler = RegexHandler()
+
+    # If property file is empty, (no contents) but has header line, return the header
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()
+        if len(prop_file) == 1 and set(prop_file[0].strip().split(",")) == set(["prop_id","full_address"]):
+            return header
+        elif len(prop_file) == 0:
+            return ""
 
     # Get the index of the columns in the files
     prop_id_index_1 = 0
@@ -98,6 +105,8 @@ def prop_email_matcher(prop_fpath: str, email_fpath: str) -> str:
             else:
                 data.append(f"{prop_id},{full_address},")
 
+    if len(data) == 1:
+        return header
     return "\n".join(data)
 
 def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
@@ -113,8 +122,15 @@ def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
     """
     header = "prop_id,full_address,phone"
     data = [header]
-
     regex_handler = RegexHandler()
+
+    # If property file is empty, (no contents) but has header line, return the header
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()
+        if len(prop_file) == 1 and set(prop_file[0].strip().split(",")) == set(["prop_id","full_address"]):
+            return header
+        elif len(prop_file) == 0:
+            return ""
 
     # Get the index of the columns in the files
     prop_id_index_1 = 0
@@ -150,11 +166,84 @@ def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
             else:
                 data.append(f"{prop_id},{full_address},")
 
+    if len(data) == 1:
+        return header
     return "\n".join(data)
 
 
 def merge_prop_email_phone(prop_fpath: str, email_phone_fpath: str) -> str:
-    pass
+    """
+    Merges property records with email and phone numbers.
+
+    Arguments:
+        prop_fpath (str): Path to the properties CSV file.
+        email_phone_fpath (str): Path to the email and phone numbers CSV file.
+
+    Returns:
+        str: A CSV-like string containing the property ID, full address, email, and phone number.
+    """
+
+    header = "prop_id,full_address,email,phone"
+    data = [header]
+    regex_handler = RegexHandler()
+
+    # If property file is empty, (no contents) but has header line, return the header
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()
+        if len(prop_file) == 1 and set(prop_file[0].strip().split(",")) == set(["prop_id","full_address"]):
+            return header
+        elif len(prop_file) == 0:
+            return ""
+
+    # Get the index of the columns in the files
+    prop_id_index_1 = 0
+    prop_id_index_2 = 0
+    full_address_index = 1
+    email_index = 1
+    phone_index = 2
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()[0]
+        prop_id_index_1 = prop_file.strip().split(",").index("prop_id")
+        full_address_index = prop_file.strip().split(",").index("full_address")
+    with open(email_phone_fpath, 'r') as email_phone_file:
+        email_phone_file = email_phone_file.readlines()[0]
+        prop_id_index_2 = email_phone_file.strip().split(",").index("prop_id")
+        email_index = email_phone_file.strip().split(",").index("email")
+        phone_index = email_phone_file.strip().split(",").index("phone")
+
+    # Read the email and phone file and keep the entries where at least one of the contact information is valid
+    valid_emails_phones = {}
+    with open(email_phone_fpath, 'r') as email_phone_file:
+        email_phone_file = email_phone_file.readlines()[1:]
+        for line in email_phone_file:
+            prop_id = line.strip().split(",")[prop_id_index_2]
+            email = line.strip().split(",")[email_index]
+            phone = line.strip().split(",")[phone_index]
+            if regex_handler.validate_email(email) and regex_handler.validate_phone(phone):
+                valid_emails_phones[prop_id] = (email, phone)
+            elif regex_handler.validate_email(email) and not regex_handler.validate_phone(phone):
+                valid_emails_phones[prop_id] = (email, False)
+            elif not regex_handler.validate_email(email) and regex_handler.validate_phone(phone):
+                valid_emails_phones[prop_id] = (False, phone)
+
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()[1:]
+        for line in prop_file:
+            prop_id = line.strip().split(",")[prop_id_index_1]
+            full_address = line.strip().split(",")[full_address_index]
+            if prop_id in valid_emails_phones:
+                if valid_emails_phones[prop_id][0] and valid_emails_phones[prop_id][1]:
+                    data.append(f"{prop_id},{full_address},{valid_emails_phones[prop_id][0]},{valid_emails_phones[prop_id][1]}")
+                elif valid_emails_phones[prop_id][0] and not valid_emails_phones[prop_id][1]:
+                    data.append(f"{prop_id},{full_address},{valid_emails_phones[prop_id][0]},")
+                elif not valid_emails_phones[prop_id][0] and valid_emails_phones[prop_id][1]:
+                    data.append(f"{prop_id},{full_address},,{valid_emails_phones[prop_id][1]}")
+            else:
+                data.append(f"{prop_id},{full_address},,")
+
+    if len(data) == 1:
+        return header
+    return "\n".join(data)
     
 
 if __name__ == "__main__":
