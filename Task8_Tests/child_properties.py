@@ -265,8 +265,6 @@ class Apartment(Property):
             raise CustomValueError("Full address cannot be empty")
         if len(full_address.split(" ")) != 6:
             raise CustomValueError("Full address is not valid. It must be in the format <apartment number>/<street number> <street name> <street type> <suburb> <state code> <postcode>")
-        if full_address.split(" ")[0].split("/")[1].isdigit() == False:
-            raise CustomValueError("Street number must be a proper number")
         if full_address.split(" ")[5].isdigit() == False:
             raise CustomValueError("Postcode must be a proper number")
 

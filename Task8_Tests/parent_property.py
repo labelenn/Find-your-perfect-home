@@ -159,7 +159,7 @@ class Property(ABC):
         """
         if not isinstance(floor_number, int):
             raise CustomTypeError("Floor number must be an integer")
-        if floor_number < 0:
+        if floor_number <= 0:
             raise CustomValueError("Floor number must be a non-negative integer")
         
         self.floor_number = floor_number
@@ -179,6 +179,11 @@ class Property(ABC):
         Arguments:
             land_area (int): the land area of the property
         """
+        if not isinstance(land_area, int):
+            raise CustomTypeError("Land area must be an integer")
+        if land_area <= 0:
+            raise CustomValueError("Land area must be a non-negative integer")
+
         self.land_area = land_area
 
     @abstractmethod

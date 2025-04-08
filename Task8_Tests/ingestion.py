@@ -13,35 +13,37 @@ def ingest_files(props_file: str, medical_centres_file: str, schools_file: str, 
         for line in reader:
             address = line['full_address']
             prop_type = 'apartment' if "/" in address.split(' ')[0] else 'house'
-            if prop_type == 'house':
-                # if its a house, initialise a house
-                prop = House(line['prop_id'],
-                             int(line['bedrooms']),
-                             int(line['bathrooms']),
-                             int(line['parking_spaces']),
-                             line['full_address'],
-                             int(line['land_area']),
-                             int(line['floor_area']),
-                             int(line['price']),
-                             line['property_features'].split(';'),
-                             (float(line['latitude']), float(line['longitude']))
-                )
-            else:
-                prop = Apartment(
-                    line['prop_id'],
-                    int(line['bedrooms']),
-                    int(line['bathrooms']),
-                    int(line['parking_spaces']),
-                    line['full_address'],
-                    int(line['floor_number']),
-                    int(line['floor_area']),
-                    int(line['price']),
-                    line['property_features'].split(';'),
-                    (float(line['latitude']), float(line['longitude']))
-                )
-
-            # Add the property to the list
-            properties.append(prop)
+            try:
+                if prop_type == 'house':
+                    # if its a house, initialise a house
+                    prop = House(line['prop_id'],
+                                int(line['bedrooms']),
+                                int(line['bathrooms']),
+                                int(line['parking_spaces']),
+                                line['full_address'],
+                                int(line['land_area']),
+                                int(line['floor_area']),
+                                int(line['price']),
+                                line['property_features'].split(';'),
+                                (float(line['latitude']), float(line['longitude']))
+                    )
+                else:
+                    prop = Apartment(
+                        line['prop_id'],
+                        int(line['bedrooms']),
+                        int(line['bathrooms']),
+                        int(line['parking_spaces']),
+                        line['full_address'],
+                        int(line['floor_number']),
+                        int(line['floor_area']),
+                        int(line['price']),
+                        line['property_features'].split(';'),
+                        (float(line['latitude']), float(line['longitude']))
+                    )
+                properties.append(prop)
+            except:
+                # Handle the case where conversion fails
+                continue
 
     # Write code to read sample amenity files and create a list
     amenities = []
@@ -51,26 +53,30 @@ def ingest_files(props_file: str, medical_centres_file: str, schools_file: str, 
             reader = csv.DictReader(csvfile)
             a = None
             for line in reader:
-                if 'stop_id' in line.keys():
-                    if validate_line(line, ['stop_id', 'stop_name', 'stop_lat', 'stop_lon']):
-                        a = create_amenity(line['stop_id'], line['stop_name'], (line['stop_lat'], line['stop_lon']), 'train_station', None)
+                try:
+                    if 'stop_id' in line.keys():
+                        if validate_line(line, ['stop_id', 'stop_name', 'stop_lat', 'stop_lon']):
+                            a = create_amenity(line['stop_id'], line['stop_name'], (line['stop_lat'], line['stop_lon']), 'train_station', None)
 
-                elif 'gp_code' in line.keys():
-                    if validate_line(line, ['gp_code', 'gp_name', 'location']):
-                        loc = json.loads(line['location'])
-                        gp_lat = loc['lat']
-                        gp_lon = loc['lng']
-                        a = create_amenity(line['gp_code'], line['gp_name'], (gp_lat, gp_lon), 'medical_centre', None)
+                    elif 'gp_code' in line.keys():
+                        if validate_line(line, ['gp_code', 'gp_name', 'location']):
+                            loc = json.loads(line['location'])
+                            gp_lat = loc['lat']
+                            gp_lon = loc['lng']
+                            a = create_amenity(line['gp_code'], line['gp_name'], (gp_lat, gp_lon), 'medical_centre', None)
 
-                elif 'school_no' in line.keys():
-                    if validate_line(line, ['school_no', 'school_name', 'school_lat', 'school_lon', 'school_type']):
-                        a = create_amenity(line['school_no'], line['school_name'], (line['school_lat'], line['school_lon']), 'school', line['school_type'])
+                    elif 'school_no' in line.keys():
+                        if validate_line(line, ['school_no', 'school_name', 'school_lat', 'school_lon', 'school_type']):
+                            a = create_amenity(line['school_no'], line['school_name'], (line['school_lat'], line['school_lon']), 'school', line['school_type'])
 
-                elif 'facility_id' in line.keys():
-                    if validate_line(line, line.keys()):
-                        a = create_amenity(line['facility_id'], line['facility_name'], (line['sport_lat'], line['sport_lon']), 'sport_facility', line['sport_played'])
+                    elif 'facility_id' in line.keys():
+                        if validate_line(line, line.keys()):
+                            a = create_amenity(line['facility_id'], line['facility_name'], (line['sport_lat'], line['sport_lon']), 'sport_facility', line['sport_played'])
 
-                amenities.append(a)
+                    amenities.append(a)
+                except:
+                    # Handle the case where conversion fails
+                    continue
 
     return (properties, amenities)
 
