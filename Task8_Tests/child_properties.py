@@ -17,9 +17,6 @@ class House(Property):
         price (int): the predicted price of the property
         property_features (list of strings): a list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
         coordinates (tuple of floats): the latitude and longitude of the property
-    
-    Class Attributes:
-        suburb (str): the suburb of the property
     """
     def __init__(self, prop_id: str, 
                         bedrooms: int, 
@@ -46,7 +43,47 @@ class House(Property):
             property_features (list of strings): a list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
             coordinates (tuple of floats): the latitude and longitude of the property
         """
-        # Validation checks
+
+        self.validate_data(prop_id, bedrooms, bathrooms, parking_spaces, full_address, land_area, floor_area, price, property_features, coordinates)
+            
+        self.prop_id = prop_id
+        self.bedrooms = bedrooms
+        self.bathrooms = bathrooms
+        self.parking_spaces = parking_spaces
+        self.full_address = full_address
+        self.land_area = land_area
+        self.floor_area = floor_area
+        self.price = price
+        self.property_features = property_features
+        self.coordinates = coordinates
+        self.suburb = full_address.split(" ")[-3]
+
+    def validate_data(self, prop_id: str, 
+                        bedrooms: int, 
+                        bathrooms: int, 
+                        parking_spaces: int, 
+                        full_address: str,
+                        land_area: int,
+                        floor_area: int,
+                        price: int,
+                        property_features: List[str],
+                        coordinates: Tuple[float, float]):
+        """
+        Validates the data for the house object.
+
+        Arguments:
+            prop_id (str): the property's ID
+            bedrooms (int): the number of bedrooms in the property
+            bathrooms (int): the number of bathrooms in the property
+            parking_spaces (int): the number of car spaces in the property
+            full_address (str): the address of the property
+            land_area (int): land area in m^2 of the property
+            floor_area (int): floor area in m^2 of the property
+            price (int): the predicted price of the property
+            property_features (list of strings): a list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
+            coordinates (tuple of floats): the latitude and longitude of the property
+        """
+
         if not isinstance(prop_id, str):
             raise CustomTypeError("Property ID must be a string")
         if prop_id in ("", None):
@@ -104,18 +141,6 @@ class House(Property):
         
         if not isinstance(coordinates, tuple) or len(coordinates) != 2:
             raise CustomTypeError("Coordinates must be a tuple of two floats")
-            
-        self.prop_id = prop_id
-        self.bedrooms = bedrooms
-        self.bathrooms = bathrooms
-        self.parking_spaces = parking_spaces
-        self.full_address = full_address
-        self.land_area = land_area
-        self.floor_area = floor_area
-        self.price = price
-        self.property_features = property_features
-        self.coordinates = coordinates
-        self.suburb = full_address.split(" ")[-3]
 
     def get_land_area(self) -> int:
         """
@@ -146,9 +171,6 @@ class Apartment(Property):
         price (int): the predicted price of the property
         property_features (list of strings): a list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
         coordinates (tuple of floats): the latitude and longitude of the property
-    
-    Class Attributes:
-        suburb (str): the suburb of the property
     """
     def __init__(self, prop_id: str, 
                         bedrooms: int, 
@@ -175,7 +197,47 @@ class Apartment(Property):
             property_features (list of strings): a list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
             coordinates (tuple of floats): the latitude and longitude of the property
         """
-        # Validation checks
+       
+        self.validate_data(prop_id, bedrooms, bathrooms, parking_spaces, full_address, floor_number, floor_area, price, property_features, coordinates)
+
+        self.prop_id = prop_id
+        self.bedrooms = bedrooms
+        self.bathrooms = bathrooms
+        self.parking_spaces = parking_spaces
+        self.full_address = full_address
+        self.floor_number = floor_number
+        self.floor_area = floor_area
+        self.price = price
+        self.property_features = property_features
+        self.coordinates = coordinates
+        self.suburb = full_address.split(" ")[-3]
+
+    def validate_data(self, prop_id: str,
+                        bedrooms: int, 
+                        bathrooms: int, 
+                        parking_spaces: int, 
+                        full_address: str,
+                        floor_number: int,
+                        floor_area: int,
+                        price: int,
+                        property_features: List[str],
+                        coordinates: Tuple[float, float]):
+        """
+        Validates the data for the apartment object.
+
+        Arguments:
+            prop_id (str): the property's ID
+            bedrooms (int): the number of bedrooms in the property
+            bathrooms (int): the number of bathrooms in the property
+            parking_spaces (int): the number of car spaces in the property
+            full_address (str): the address of the property
+            floor_number (int): the floor number of the apartment
+            floor_area (int): floor area in m^2 of the property
+            price (int): the predicted price of the property
+            property_features (list of strings): a list of the features of the property. Could include solar, air conditioning, dishwasher, floorboards, central heating, etc.
+            coordinates (tuple of floats): the latitude and longitude of the property
+        """
+
         if not isinstance(prop_id, str):
             raise CustomTypeError("Property ID must be a string")
         if prop_id in ("", None):
@@ -233,18 +295,6 @@ class Apartment(Property):
         if not isinstance(coordinates, tuple) or len(coordinates) != 2:
             raise CustomTypeError("Coordinates must be a tuple of two floats")
 
-        self.prop_id = prop_id
-        self.bedrooms = bedrooms
-        self.bathrooms = bathrooms
-        self.parking_spaces = parking_spaces
-        self.full_address = full_address
-        self.floor_number = floor_number
-        self.floor_area = floor_area
-        self.price = price
-        self.property_features = property_features
-        self.coordinates = coordinates
-        self.suburb = full_address.split(" ")[-3]
-
     def get_floor_number(self) -> int:
         """
         Returns:
@@ -263,4 +313,3 @@ if __name__ == "__main__":
     pass
 
 
-# Copy and paste your code from task 6

@@ -27,7 +27,30 @@ class Amenity():
             amenity_subtype (str): the subtype of the amenity
             coordinates (tuple of floats): the latitude and longitude of the
         """
-        # Validation checks
+        self.validate_data(amenity_code, amenity_name, amenity_type, amenity_subtype, coordinates)
+        
+        self.amenity_code = amenity_code
+        self.amenity_name = amenity_name
+        self.amenity_type = amenity_type
+        self.amenity_subtype = amenity_subtype
+        self.amenity_coords = coordinates
+
+    def validate_data(self, amenity_code: str, 
+                        amenity_name: str,
+                        amenity_type: str, 
+                        amenity_subtype: str,
+                        coordinates: Tuple[float, float]):
+        """
+        Validates the data for the amenity object.
+        
+        Arguments:
+            amenity_code (str): the amenity's code
+            amenity_name (str): the name of the amenity
+            amenity_type (str): the type of the amenity
+            amenity_subtype (str): the subtype of the amenity
+            coordinates (tuple of floats): the latitude and longitude of the
+        """
+
         if not isinstance(amenity_code, str):
             raise CustomTypeError("Amenity code must be a string")
         if amenity_code in ("", None):
@@ -51,12 +74,6 @@ class Amenity():
             raise CustomTypeError("Coordinates must be a tuple of two floats")
         if not all(isinstance(coord, float) for coord in coordinates):
             raise CustomTypeError("Coordinates must be a tuple of two floats")
-        
-        self.amenity_code = amenity_code
-        self.amenity_name = amenity_name
-        self.amenity_type = amenity_type
-        self.amenity_subtype = amenity_subtype
-        self.amenity_coords = coordinates
 
     def get_amenity_code(self) -> str:
         """

@@ -85,16 +85,24 @@ def prop_email_matcher(prop_fpath: str, email_fpath: str) -> str:
         prop_id_index_2 = email_file.strip().split(",").index("prop_id")
         email_index = email_file.strip().split(",").index("email")
 
-    # Read the email file and keep the valid emails and their corresponding property IDs
+    # Read the property file and get the property IDs
+    prop_ids = []
+    with open(prop_fpath, 'r') as prop_file:
+        prop_file = prop_file.readlines()[1:]
+        for line in prop_file:
+            prop_ids.append(line.strip().split(",")[prop_id_index_1])
+
+    # Read the email file and keep the valid emails and their corresponding property IDs if the property ID is in the property file
     valid_emails = {}
     with open(email_fpath, 'r') as email_file:
         email_file = email_file.readlines()[1:]
         for line in email_file:
             prop_id = line.strip().split(",")[prop_id_index_2]
             email = line.strip().split(",")[email_index]
-            if regex_handler.validate_email(email):
+            if regex_handler.validate_email(email) and prop_id in prop_ids:
                 valid_emails[prop_id] = email
 
+    # Read the property file and match with valid emails.
     with open(prop_fpath, 'r') as prop_file:
         prop_file = prop_file.readlines()[1:]
         for line in prop_file:
@@ -102,9 +110,9 @@ def prop_email_matcher(prop_fpath: str, email_fpath: str) -> str:
             full_address = line.strip().split(",")[full_address_index]
             if prop_id in valid_emails:
                 data.append(f"{prop_id},{full_address},{valid_emails[prop_id]}")
+            else:
+                data.append(f"{prop_id},{full_address},")
 
-    if len(data) == 1:
-        return header
     return "\n".join(data)
 
 def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
@@ -154,6 +162,7 @@ def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
             if regex_handler.validate_phone(phone):
                 valid_phones[prop_id] = phone
 
+    # Read the property file and match with valid phones
     with open(prop_fpath, 'r') as prop_file:
         prop_file = prop_file.readlines()[1:]
         for line in prop_file:
@@ -162,8 +171,6 @@ def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
             if prop_id in valid_phones:
                 data.append(f"{prop_id},{full_address},{valid_phones[prop_id]}")
 
-    if len(data) == 1:
-        return header
     return "\n".join(data)
 
 
@@ -222,6 +229,7 @@ def merge_prop_email_phone(prop_fpath: str, email_phone_fpath: str) -> str:
             elif not regex_handler.validate_email(email) and regex_handler.validate_phone(phone):
                 valid_emails_phones[prop_id] = (False, phone)
 
+    # Read the property file and match with the valid emails and phones
     with open(prop_fpath, 'r') as prop_file:
         prop_file = prop_file.readlines()[1:]
         for line in prop_file:
@@ -234,8 +242,6 @@ def merge_prop_email_phone(prop_fpath: str, email_phone_fpath: str) -> str:
                     data.append(f"{prop_id},{full_address},{valid_emails_phones[prop_id][0]},")
                 elif not valid_emails_phones[prop_id][0] and valid_emails_phones[prop_id][1]:
                     data.append(f"{prop_id},{full_address},,{valid_emails_phones[prop_id][1]}")
-            # else:
-            #     data.append(f"{prop_id},{full_address},,")
 
     if len(data) == 1:
         return header
