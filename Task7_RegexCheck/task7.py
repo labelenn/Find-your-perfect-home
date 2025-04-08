@@ -102,8 +102,6 @@ def prop_email_matcher(prop_fpath: str, email_fpath: str) -> str:
             full_address = line.strip().split(",")[full_address_index]
             if prop_id in valid_emails:
                 data.append(f"{prop_id},{full_address},{valid_emails[prop_id]}")
-            else:
-                data.append(f"{prop_id},{full_address},")
 
     if len(data) == 1:
         return header
@@ -163,8 +161,6 @@ def prop_phone_matcher(prop_fpath: str, phone_fpath: str) -> str:
             full_address = line.strip().split(",")[full_address_index]
             if prop_id in valid_phones:
                 data.append(f"{prop_id},{full_address},{valid_phones[prop_id]}")
-            else:
-                data.append(f"{prop_id},{full_address},")
 
     if len(data) == 1:
         return header
@@ -238,8 +234,8 @@ def merge_prop_email_phone(prop_fpath: str, email_phone_fpath: str) -> str:
                     data.append(f"{prop_id},{full_address},{valid_emails_phones[prop_id][0]},")
                 elif not valid_emails_phones[prop_id][0] and valid_emails_phones[prop_id][1]:
                     data.append(f"{prop_id},{full_address},,{valid_emails_phones[prop_id][1]}")
-            else:
-                data.append(f"{prop_id},{full_address},,")
+            # else:
+            #     data.append(f"{prop_id},{full_address},,")
 
     if len(data) == 1:
         return header
